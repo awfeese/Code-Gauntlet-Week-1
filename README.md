@@ -12,10 +12,10 @@ Sandwich Shop
   
     Large, Regular
     
-Guidelines
+Guidelines:
 
   SOLID, DRY, C#, Console
   
-Evaluation
+Evaluation:
 
   Quality Code, Adheres to guidelines, Elegant Code, Re-usability
