@@ -1,5 +1,3 @@
-DUE: FRIDAY @ 2 PM
-
 Sandwich Shop
 
   4 Types:
@@ -16,14 +14,8 @@ Sandwich Shop
     
 Guidelines
 
-  SOLID
-  DRY
-  C#
-  Console
+  SOLID, DRY, C#, Console
   
 Evaluation
 
-  Quality Code
-  Adheres to guidelines
-  Elegant Code
-  Re-usability
+  Quality Code, Adheres to guidelines, Elegant Code, Re-usability
