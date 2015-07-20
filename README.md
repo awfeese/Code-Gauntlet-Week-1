@@ -1,16 +1,16 @@
 Sandwich Shop
 
-  4 Types:
+Types:
   
-    Turkey, Roast Beef, Veggie, Tuna
+  `Turkey, Roast Beef, Veggie, Tuna`
     
-  4 Add-Ons:
+Add-Ons:
   
-    Cheese, Bacon, Avocado, Sauteed Onions
+  `Cheese, Bacon, Avocado, Sauteed Onions`
     
-  2 Sizes:
+Sizes:
   
-    Large, Regular
+  `Large, Regular`
     
 Guidelines:
 
