@@ -1,4 +1,4 @@
-Sandwich Shop
+Code Gauntlet Week 1:Sandwich Shop 
 
 Types:
   
@@ -6,7 +6,7 @@ Types:
     
 Add-Ons:
   
-  `Cheese, Bacon, Avocado, Sauteed Onions`
+  `Cheese, Bacon, Avocado, Sautéed Onions`
     
 Sizes:
   
@@ -15,6 +15,7 @@ Sizes:
 Guidelines:
 
   `SOLID, DRY, C#, Console`
+  
   
 Evaluation:
 
