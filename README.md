@@ -1,4 +1,4 @@
-Code Gauntlet Week 1:Sandwich Shop 
+# Code Gauntlet Week 1: Sandwich Shop 
 
 Types:
   
