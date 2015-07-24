@@ -1,6 +1,8 @@
+using SandwichShop.Interface;
+
 namespace SandwichShop.SandwichTypes
 {
-    public class Veggie : SandwichShop.Interface.Sandwich
+    public class Veggie : Sandwich
     {
         private double price = 4.00;
 

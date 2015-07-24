@@ -1,10 +1,10 @@
-using SandwichShop.Interface;
+﻿using SandwichShop.Interface;
 
-namespace SandwichShop.SandwichTypes
+namespace Types
 {
-    public class Tuna : Sandwich
+    public class Ham : Sandwich
     {
-        private double price = 4.75;
+        private double price = 6.00;
 
         public double Price
         {

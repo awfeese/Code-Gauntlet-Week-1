@@ -17,6 +17,9 @@ using MahApps.Metro.Controls;
 using SandwichShop.Interface;
 using SandwichShop.SandwichTypes;
 using SandwichShop.SandwichAddOns;
+using SandwichShop.Sizes;
+using System.IO;
+using System.Reflection;
 
 namespace SandwichShop.MetroUI
 {
@@ -25,98 +28,121 @@ namespace SandwichShop.MetroUI
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private string type;
+        List<Type> sandwichTypes, sandwichAddOns, sandwichSizes;
+        Sandwich temp, sandwich;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            sandwichTypes = initializeList("RelativeSandwichTypePath").OrderBy(x => x.Name).ToList();
+            updateUI(sandwichTypes, SandwichTypeListBox);
+
+            sandwichAddOns = initializeList("RelativeAddOnPath").OrderBy(x => x.Name).ToList();
+            updateUI(sandwichAddOns, AddOnListBox);
+
+            sandwichSizes = initializeList("RelativeSizePath").OrderBy(x => x.Name).ToList();
+            updateUI(sandwichSizes, SizeListBox);
+
+            setSelectedValues();
+            addListenerToListBox();
         }
 
-        private void GetPrice_Click(object sender, RoutedEventArgs e)
-        {
-            Type size = getSelectedSize();
-            List<Type> addOns = getSelectedAddOns();
-            Type sandType = getSelectedSandwich();
 
-            Sandwich prev = Activator.CreateInstance(sandType) as Sandwich;
-            Sandwich sandwich;
-            foreach ( Type addOn in addOns)
-            {
-                sandwich = Activator.CreateInstance(addOn, new object[] { prev }) as Sandwich;
-                prev = sandwich;
-            }          
-            sandwich = Activator.CreateInstance(size, new object[] { prev }) as Sandwich;
-               
-            Price.Content = "Price: $" +  string.Format("{0:0.00}", sandwich.Price);
-        }
-
-        private Type getSelectedSize()
+        private List<Type> initializeList(string path)
         {
-            Type size;
-            if (SizeRegular.IsChecked.HasValue ? SizeRegular.IsChecked.Value : false)
-            {
-                size = typeof(Regular);
-            }
+            List<Type> listOfTypes;
+
+            var typePath = ConfigurationManager.AppSettings[path];
+            var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (string.IsNullOrEmpty(typePath))
+                typePath = applicationPath;
             else
-            {
-                size = typeof(Large);
-            }
-            return size;
+                typePath = applicationPath + typePath + System.IO.Path.DirectorySeparatorChar;
+
+            listOfTypes = AssemblyLoader.LoadFromAssembly(typePath);
+            return listOfTypes;
         }
 
-        private List<Type> getSelectedAddOns()
+        private void updateUI(List<Type> listOfTypes, ListBox listBox)
         {
-            List<Type> addOns = new List<Type>();
-            if (AddOnAvocado.IsChecked.HasValue ? AddOnAvocado.IsChecked.Value : false)
+            foreach (Type type in listOfTypes)
             {
-                addOns.Add(typeof(Avocado));
+                listBox.Items.Add(type.Name);
             }
-            if (AddOnBacon.IsChecked.HasValue ? AddOnBacon.IsChecked.Value : false)
+        }
+        
+        private void setSelectedValues()
+        {
+            SandwichTypeListBox.SelectedIndex = 0;
+            AddOnListBox.SelectedIndex = -1;
+            SizeListBox.SelectedIndex = 0;
+
+            updatePrice();
+        }
+
+        private void addListenerToListBox()
+        {
+            SandwichTypeListBox.SelectionChanged += SandwichSelectionChanged;
+            AddOnListBox.SelectionChanged += SandwichSelectionChanged;
+            SizeListBox.SelectionChanged += SandwichSelectionChanged;
+        }
+        
+
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+            setSelectedValues();
+        }
+
+        private void SandwichSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            updatePrice();
+        }
+
+
+        private void updatePrice()
+        {
+            Type sandwichType = getSelectedSandwich();
+            temp = Activator.CreateInstance(sandwichType) as Sandwich;
+
+            List<Type> addOns = getSelectedAddOns();
+            foreach (Type addOn in addOns)
             {
-                addOns.Add(typeof(Bacon));
+                sandwich = Activator.CreateInstance(addOn, new object[] { temp }) as Sandwich;
+                temp = sandwich;
             }
-            if (AddOnCheese.IsChecked.HasValue ? AddOnCheese.IsChecked.Value : false)
-            {
-                addOns.Add(typeof(Cheese));
-            }
-            if (AddOnSauteedOnions.IsChecked.HasValue ? AddOnSauteedOnions.IsChecked.Value : false)
-            {
-                addOns.Add(typeof(SauteedOnion));
-            }
-            return addOns;
+
+            Type size = getSelectedSize();
+            sandwich = Activator.CreateInstance(size, new object[] { temp }) as Sandwich;
+
+            Price.Content = "Price: $" + string.Format("{0:0.00}", sandwich.Price);
         }
 
         private Type getSelectedSandwich()
         {
-            Type type;
-            if (TypeTuna.IsSelected)
-            {
-                type = typeof(Tuna);
-            }
-            else if (TypeTurkey.IsSelected)
-            {
-                type = typeof(Turkey);
-            }
-            else if (TypeVeggie.IsSelected)
-            {
-                type = typeof(Veggie);
-            }
-            else
-            {
-                type = typeof(RoastBeef);
-            }
+            Type type = sandwichTypes.Find(x => x.Name == SandwichTypeListBox.SelectedItem.ToString());
             return type;
         }
 
-        private void Reset_Click(object sender, RoutedEventArgs e)
+        private List<Type> getSelectedAddOns()
         {
-            TypeRoastBeef.IsSelected = true;
-            AddOnAvocado.IsChecked = false;
-            AddOnBacon.IsChecked = false;
-            AddOnCheese.IsChecked = false;
-            AddOnSauteedOnions.IsChecked = false;
-            SizeRegular.IsChecked = true;
-            Price.Content = "Price: $0.00";
+            var addOns = new List<Type>();
+            var selectedItems = AddOnListBox.SelectedItems;
+
+            foreach (object item in selectedItems)
+            {
+                Type type = sandwichAddOns.Find(x => x.Name == item.ToString());
+                addOns.Add(type);
+            }
+
+            return addOns;
+        }
+
+        private Type getSelectedSize()
+        {
+            Type type = sandwichSizes.Find(x => x.Name == SizeListBox.SelectedItem.ToString());
+            return type;
         }
     }
 }

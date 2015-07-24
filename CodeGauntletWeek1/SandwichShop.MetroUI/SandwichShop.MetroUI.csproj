@@ -68,6 +68,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AssemblyLoader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -114,8 +115,22 @@
       <Project>{cd19bf52-08b7-4c30-91b3-3127ebb748e6}</Project>
       <Name>SandwichShop.SandwichTypes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SandwochShop.Sizes\SandwichShop.Sizes.csproj">
+      <Project>{2eae1753-41d0-4b51-8269-39c977c74916}</Project>
+      <Name>SandwichShop.Sizes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if not exist "SandwichTypes" mkdir "SandwichTypes"
+if not exist "AddOns" mkdir "AddOns"
+if not exist "Sizes" mkdir "Sizes"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /d /y "$(ProjectDir)$(OutDir)SandwichShop.SandwichTypes.dll" "$(ProjectDir)$(OutDir)SandwichTypes"
+xcopy /d /y "$(ProjectDir)$(OutDir)SandwichShop.SandwichAddOns.dll" "$(ProjectDir)$(OutDir)AddOns"
+xcopy /d /y "$(ProjectDir)$(OutDir)SandwichShop.Sizes.dll" "$(ProjectDir)$(OutDir)Sizes"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

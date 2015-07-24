@@ -1,6 +1,8 @@
+using SandwichShop.Interface;
+
 namespace SandwichShop.SandwichTypes
 {
-    public class Turkey : SandwichShop.Interface.Sandwich
+    public class Turkey : Sandwich
     {
         private double price = 5.00;
 
